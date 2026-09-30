@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kingsong S18 en LEGO</title>
+<link rel="stylesheet" href="../../lib/css/plan.css">
+<script src="../../lib/vendor/three.js"></script>
+<script src="../../lib/vendor/OrbitControls.js"></script>
+<script src="../../lib/lego/core.js"></script>
+<script src="../../lib/lego/geometry.js"></script>
+<script src="../../lib/lego/engine.js"></script>
+<script src="../../lib/lego/page.js"></script>
+<script src="model.js"></script>
+</head>
+<body>
+<script>
+const { mountPlan, kingsongS18, WHEELS_S18, standPlatesS18 } = LEGO;
+const img = f => '../../Kingsong%20S18/' + encodeURIComponent(f);
+
+mountPlan({
+  title: 'Kingsong <span>S18</span>',
+  subtitle: 'Amortisseur central à l\'arrière avec bras oscillants dorés, trolley qui coulisse vers le haut, pads intégrés à la coque, pédales pliantes. Tu choisis la roue.',
+  intro: 'Tourne-le à la souris (regarde par l\'arrière pour voir l\'amortisseur). Les boutons font bouger le trolley, les pédales et la suspension.',
+  factory: kingsongS18,
+  view: {az:-130, el:16},
+  options: [
+    {key:'wheel', label:'Ta roue :', default:'82',
+     choices: Object.entries(WHEELS_S18).map(([value,w]) => ({value, label:w.label})),
+     help:'Toute roue Technic de 60 à 84 mm de diamètre et de 23 mm de large maximum. La vraie S18 a un pneu route (sans crampons) et une jante argentée.'},
+  ],
+  stats: (o, def) => [['≈ 11 cm','de haut'],['3','mécanismes'],[`Ø ${def.info.wheel.d} mm`,'roue']],
+  photos: [
+    {src: img('s18 profil.jpg'), alt:'Profil'},
+    {src: img('s18.jpg'), alt:'Trois-quarts avant'},
+    {src: img('s18 2.jpg'), alt:'Bras dorés et amortisseur'},
+    {src: img('s18 dos.jpg'), alt:'Dos : amortisseur central'},
+    {src: img('s18 suspension.jpg'), alt:'Suspension de près'},
+    {src: img('s18 arbre.jpg'), alt:'En situation'},
+  ],
+  sections: [
+    {title:'Comment ça marche', html: () => `
+      <div class="card">
+        <table>
+          <tr><th>Mécanisme</th><th>Principe LEGO</th></tr>
+          <tr><td><b>Suspension</b></td><td>La roue est portée par deux <b>poutres 1x11 beiges</b> qui pivotent à l'avant de la coque. Derrière la roue, une <b>traverse</b> (axe 5) relie les deux bras. Un <b>seul amortisseur</b>, vertical, au centre arrière, relie cette traverse au toit, comme le montage de la vraie S18. Appuie sur le toit : les bras montent derrière et l'amortisseur se comprime.</td></tr>
+          <tr><td><b>Trolley</b></td><td>Deux <b>axes verticaux</b> coulissent dans des <b>briques rondes 2x2 à trou d'axe</b>. Le trou en croix freine l'axe, donc le trolley tient seul en position. Course : environ 3 cm.</td></tr>
+          <tr><td><b>Pads intégrés</b></td><td>Le haut de chaque flanc déborde d'1 tenon (briques 2x6) : c'est la forme des protège-jambes de la coque.</td></tr>
+          <tr><td><b>Pédales</b></td><td><b>Clips sur barre</b>, elles se replient contre la roue.</td></tr>
+        </table>
+        <div class="tip">L'amortisseur est loin du pivot (80 mm) et l'axe de roue près (32 mm) : la roue bouge 2,5 fois moins que l'amortisseur, environ 3 mm. La suspension est donc douce, mais son débattement est faible. Les dimensions de l'amortisseur 6.5L sont estimées ; règle avec une plaque 1x2 si besoin (étape 8).</div>
+        <p style="margin:10px 0 0;font-size:15px">Tu as des <b>poutres coudées</b> ? Tu peux remplacer le bout arrière de chaque bras par une poutre en L pour imiter la forme courbée des bras dorés. Garde juste le 1er trou (pivot), le 5ᵉ (roue) et le 11ᵉ (traverse) aux mêmes endroits.</p>
+      </div>`},
+    {title:'Le support selon ta roue', html: (o) => `
+      <div class="card"><table>
+        <tr><th>Roue</th><th>Support</th><th>Demi-bagues</th></tr>
+        ${Object.entries(WHEELS_S18).map(([k,w]) => {
+          const n = standPlatesS18(w.d/2), nb = Math.max(0, Math.floor((12 - w.w/2)/4));
+          return `<tr${k===o.wheel?' style="background:var(--accent-soft)"':''}><td>${w.label}</td><td>${n} plaques</td><td>${nb*2}</td></tr>`;
+        }).join('')}
+      </table></div>`},
+  ],
+  notes: `<b>Pas la bonne pièce ?</b>
+    <ul style="margin:6px 0 0;padding-left:20px;font-size:15px">
+      <li>Poutres 1x11 beiges → n'importe quelle couleur (orange, noir…). Ou une 1x9 + une 1x3 reliées par 2 connecteurs, du moment que les trous 1, 5 et 11 sont bien placés.</li>
+      <li>Plaque Technic 2x6 à trous → une 2x8 à trous (elle dépasse d'1 tenon) ou deux 2x4 à trous.</li>
+      <li>Brique ronde 2x2 à trou d'axe → plaques rondes 2x2 à trou d'axe (4032) empilées.</li>
+      <li>Connecteur perpendiculaire → brique Technic 1x2 à trou d'axe, ou juste une bague en haut de chaque axe.</li>
+      <li>Plaque 6x8 + 1x8 → toutes plaques qui couvrent 7x8 tenons.</li>
+    </ul>`,
+  stepsIntro: 'Les pièces à ajouter à chaque étape sont entourées d\'<b class="hl">orange</b> (en <b style="color:#0a84ff">bleu</b> sur les pièces beiges ou rouges). « Avant » = côté de la bande de phares blanche.',
+});
+</script>
+</body>
+</html>

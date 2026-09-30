@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Masque de Sunraku en LEGO</title>
+<link rel="stylesheet" href="../../lib/css/plan.css">
+<script src="../../lib/vendor/three.js"></script>
+<script src="../../lib/vendor/OrbitControls.js"></script>
+<script src="../../lib/lego/core.js"></script>
+<script src="../../lib/lego/geometry.js"></script>
+<script src="../../lib/lego/engine.js"></script>
+<script src="../../lib/lego/page.js"></script>
+<script src="../../lib/lego/voxel.js"></script>
+<script src="model.js"></script>
+</head>
+<body>
+<script>
+const { mountPlan, sunrakuMask, HEAD_COLORS } = LEGO;
+const img = f => '../../Masque%20Sunraku%20-%20Shangri%20la%20frontiere/' + encodeURIComponent(f);
+
+mountPlan({
+  title: 'Masque de <span>Sunraku</span>',
+  subtitle: 'La tête d\'oiseau de Shangri-La Frontier en buste d\'expo : gros bec jaune, yeux rouges, sourcils féroces, crête et collerette de plumes. Environ 14 cm, uniquement des briques classiques.',
+  factory: sunrakuMask,
+  view: {az:-35, el:14},
+  options: [
+    {key:'head', label:'Couleur de la tête :', default:'azure', choices: HEAD_COLORS,
+     help:'Les plumes foncées (collerette, crête) prennent automatiquement une teinte plus sombre.'},
+  ],
+  stats: () => [['≈ 14 cm','de haut'],['9 x 14','tenons']],
+  photos: [
+    {src: img('Vrais image Sunraku.jpg'), alt:'Sunraku (anime)'},
+    {src: img('Sunraku vrais manga.jpg'), alt:'Profil (anime)'},
+    {src: img('Masque sunraku 3d.jpg'), alt:'Masque 3D'},
+    {src: img('Masque sunraku 3d (2).jpg'), alt:'Masque 3D, profil'},
+    {src: img('Masque sunraku.jpg'), alt:'Masque en fourrure'},
+    {src: img('Masque sunraku sur humain.jpg'), alt:'Porté'},
+  ],
+  sections: [
+    {title:'Comment il est construit', html: () => `
+      <div class="card">
+        <p style="margin-top:0">Tout est en <b>briques posées à plat</b>, couche par couche, comme une sculpture : chaque couche fait 1 brique de haut. La tête est pleine, donc très solide.</p>
+        <ul style="padding-left:20px;margin:0">
+          <li><b>Le bec</b> sort de 4 tenons devant le visage et descend en crochet. Sa pointe s'assemble à part puis se verrouille sous la couche des yeux.</li>
+          <li><b>Les yeux</b> sont des briques 1x1 rouges sur la face avant, avec du blanc sur le côté. Les <b>sourcils</b> blancs remontent vers le bec : c'est ce qui donne le regard méchant.</li>
+          <li><b>La crête</b> part vers l'arrière, comme dans l'anime.</li>
+        </ul>
+        <div class="tip">Les briques de chaque couche sont choisies automatiquement pour croiser les joints avec la couche du dessous. Tu peux remplacer n'importe quelle brique par des plus petites de la même couleur (une 1x6 = une 1x4 + une 1x2…).</div>
+      </div>`},
+  ],
+  notes: `<b>Astuce</b> : il faut surtout beaucoup de <b>briques bleues</b> de toutes tailles (1x1 à 2x8). Tu manques d'une couleur ? Mets la couleur manquante à l'intérieur de la tête, où elle ne se voit pas : seules les briques du bord sont visibles.`,
+  stepsIntro: 'Une étape = une couche. Les pièces à ajouter sont entourées d\'<b class="hl">orange</b> (en <b style="color:#0a84ff">bleu</b> sur les pièces jaunes ou rouges). Le bec est à l\'avant.',
+});
+</script>
+</body>
+</html>

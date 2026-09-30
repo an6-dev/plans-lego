@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sherman S en LEGO</title>
+<style>
+  :root{
+    --bg:#f4f2ec; --card:#ffffff; --ink:#1d2024; --muted:#62676d; --line:#e2ded4;
+    --accent:#e2520f; --accent-soft:#fde9dd; --dark:#23262b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+  header{background:var(--dark);color:#fff;padding:40px 0 32px}
+  header h1{margin:0 0 6px;font-size:clamp(28px,5vw,44px);letter-spacing:-.02em}
+  header h1 span{color:#ff7a3d}
+  header p{margin:0;color:#c6cad0;max-width:680px}
+  .stats{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}
+  .stat{background:#2f3339;border-radius:10px;padding:10px 16px}
+  .stat b{display:block;font-size:22px;color:#fff}
+  .stat small{color:#aab0b7}
+  h2{font-size:26px;margin:48px 0 12px;letter-spacing:-.01em}
+  h2 .n{display:inline-block;background:var(--accent);color:#fff;border-radius:8px;padding:0 10px;margin-right:8px;font-size:20px}
+  p.lead{color:var(--muted);margin-top:0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
+  .photos{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+  .photos img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;border:1px solid var(--line);background:#fff}
+  table{border-collapse:collapse;width:100%;font-size:15px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.04em}
+  .tip{background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:8px;padding:10px 14px;margin:12px 0;font-size:15px}
+  /* viewer */
+  #viewer{position:relative;height:460px;border-radius:14px;overflow:hidden;background:radial-gradient(circle at 50% 40%,#ffffff,#e7e4dc)}
+  #viewer canvas{display:block;width:100%!important;height:100%!important;cursor:grab}
+  .vbar{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
+  .vbar input[type=range]{flex:1;min-width:160px;accent-color:var(--accent)}
+  .vbar button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 12px;font:inherit;cursor:pointer}
+  .vbar button:hover{border-color:var(--accent)}
+  #vlabel{font-weight:600;min-width:220px}
+  .hint{position:absolute;right:12px;bottom:10px;font-size:12px;color:var(--muted);background:#fffc;border-radius:6px;padding:3px 8px}
+  /* bom */
+  .bom{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+  .part{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 10px;display:flex;flex-direction:column;align-items:center;text-align:center}
+  .part img{width:120px;height:90px;object-fit:contain}
+  .part .q{font-weight:800;font-size:20px}
+  .part .nm{font-size:13px;line-height:1.3}
+  .part .rf{font-size:11px;color:var(--muted)}
+  .sw{display:inline-block;width:10px;height:10px;border-radius:3px;border:1px solid #0003;vertical-align:-1px;margin-right:4px}
+  /* steps */
+  .step{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:18px;margin:18px 0;break-inside:avoid;page-break-inside:avoid}
+  .step .img{background:radial-gradient(circle at 50% 40%,#ffffff,#eeebe4);border-radius:12px;display:flex;align-items:center;justify-content:center;min-height:260px;position:relative}
+  .step .img img{width:100%;height:auto;display:block}
+  .step .num{position:absolute;left:14px;top:10px;font-size:44px;font-weight:900;color:var(--ink);opacity:.9}
+  .step h3{margin:0 0 6px;font-size:20px}
+  .step p{margin:0 0 10px;font-size:15px}
+  .callout{border:2px solid var(--ink);border-radius:10px;padding:8px;display:flex;flex-wrap:wrap;gap:6px;background:#fbfaf7;margin-bottom:12px}
+  .callout .it{display:flex;flex-direction:column;align-items:center;width:84px;font-size:11px;text-align:center;line-height:1.2}
+  .callout .it img{width:78px;height:58px;object-fit:contain}
+  .callout .it b{font-size:15px}
+  .loading{color:var(--muted);font-style:italic}
+  footer{margin:60px 0 40px;color:var(--muted);font-size:14px}
+  .printbtn{float:right;background:var(--accent);color:#fff;border:0;border-radius:8px;padding:8px 14px;font:inherit;cursor:pointer}
+  @media (max-width:760px){.step{grid-template-columns:1fr}#viewer{height:340px}}
+  @media print{
+    body{background:#fff}
+    header{background:#fff;color:#000;padding:0}
+    header p,.stat small{color:#444}.stat{background:#eee}.stat b{color:#000}
+    .noprint,#viewer,.vbar{display:none!important}
+    .card{border:0;padding:0}
+    h2{break-before:page;margin-top:0}
+    .step{break-inside:avoid}
+  }
+</style>
+<script src="../../lib/vendor/three.js"></script>
+<script src="../../lib/vendor/OrbitControls.js"></script>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <button class="printbtn noprint" onclick="window.print()">Imprimer / PDF</button>
+    <h1>Leaperkim <span>Sherman S</span> en LEGO</h1>
+    <p>Plan de montage simple, briques courantes. Échelle ≈ 1:6, avec une vraie roue qui tourne, l'amortisseur rouge, le double phare et la poignée de transport.</p>
+    <div class="stats" id="stats"></div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <h2>Le modèle</h2>
+  <p class="lead">Tourne-le à la souris, le curseur montre chaque étape du montage.</p>
+  <div id="viewer"><div class="hint">glisser pour tourner · molette pour zoomer</div></div>
+  <div class="vbar noprint">
+    <button id="prev">◀</button>
+    <input type="range" id="slider" min="1" value="1">
+    <button id="next">▶</button>
+    <span id="vlabel"></span>
+  </div>
+
+  <h2>Photos de référence</h2>
+  <div class="photos">
+    <img src="../../Sherman%20S/LEAPERKIM_SHERMAN_S_SUSPENSION-500x500.webp" alt="Sherman S de profil">
+    <img src="../../Sherman%20S/veteran-sherman-s-electric-unicycle-1.jpg" alt="Sherman S trois-quarts">
+    <img src="../../Sherman%20S/Veteran-Sherman-S-PET-London-1-scaled.jpg" alt="Sherman S sur son support">
+    <img src="../../Sherman%20S/LEAPERKIM_SHERMAN_S-500x500.webp" alt="Sherman S">
+  </div>
+
+  <h2><span class="n">1</span>Choisis ta roue</h2>
+  <div class="card">
+    <p style="margin-top:0">C'est la seule pièce « spéciale ». N'importe quelle roue Technic <b>entre 60 et 84 mm de diamètre</b> et <b>moins de 23 mm de large</b> rentre sans rien modifier. Idéal : un pneu de moto Technic 81.6 × 15 (réf. 2902 sur jante 2903), crampons conseillés pour le look tout-terrain.</p>
+    <p>Seule la hauteur du support de présentation (dernière étape) change selon la taille :</p>
+    <table>
+      <tr><th>Diamètre du pneu</th><th>Hauteur du support</th><th>Composition</th></tr>
+      <tr><td>≈ 81 mm (moto Technic)</td><td>10 plaques</td><td>plaque 4x6 + 3 briques 2x4</td></tr>
+      <tr><td>≈ 75 mm</td><td>9 plaques</td><td>plaque 4x6 + 2 briques + 2 plaques</td></tr>
+      <tr><td>≈ 69 mm</td><td>8 plaques</td><td>plaque 4x6 + 2 briques + 1 plaque</td></tr>
+      <tr><td>≈ 62 mm</td><td>7 plaques</td><td>plaque 4x6 + 2 briques</td></tr>
+    </table>
+    <div class="tip">Règle générale : hauteur du support ≈ (rayon du pneu − 9 mm) ÷ 3,2 = nombre de plaques. Le pneu doit juste toucher la table.</div>
+  </div>
+
+  <h2><span class="n">2</span>Inventaire</h2>
+  <p class="lead">Les couleurs sont des suggestions : tout en noir marche très bien aussi. Les références (n° LEGO / BrickLink) sont là pour t'aider à trier.</p>
+  <div class="bom" id="bom"><span class="loading">Génération des images…</span></div>
+  <div class="card" style="margin-top:14px">
+    <b>Pas la bonne pièce ?</b>
+    <ul style="margin:6px 0 0;padding-left:20px;font-size:15px">
+      <li>Brique 2x6 → une 2x4 + une 2x2. Brique 1x8 → 1x4 + 1x4. En général, toute combinaison de même taille marche, essaie juste de croiser les joints avec la couche du dessous.</li>
+      <li>Plaque 6x10 + 1x10 → n'importe quelles plaques qui couvrent un rectangle de 7x10 tenons.</li>
+      <li>Pente inversée 2x2 → une brique 2x2 (coins carrés, c'est tout).</li>
+      <li>Brique phare → une brique 1x1 + une plaque ronde 1x1 transparente posée à plat devant.</li>
+      <li>Briques rondes rouges → briques 1x1 rouges carrées.</li>
+    </ul>
+  </div>
+
+  <h2><span class="n">3</span>Montage</h2>
+  <p class="lead">Les pièces à ajouter à chaque étape sont entourées d'<b style="color:var(--accent)">orange</b>. « Avant » = côté des phares blancs. Le flanc gauche est à gauche quand tu es debout sur les pédales.</p>
+  <div id="steps"><span class="loading">Génération des étapes…</span></div>
+
+  <footer>Plan généré pour un MOC personnel, inspiré du Leaperkim (Veteran) Sherman S. LEGO® est une marque du groupe LEGO, qui ne sponsorise pas ce plan.</footer>
+</main>
+
+<script>
+const { OrbitControls } = THREE;
+
+/* ---------- unités LEGO (mm) ---------- */
+const S = 8, P = 3.2;
+const ZOFF = 10;                      // la couche z=0 (plaque pédale) est à 10 plaques du sol
+const AXLE_Y = (1 + ZOFF) * P + 5.8;  // trou Technic de la couche z=1  => 41 mm
+const AXLE_Z = 5 * S;                 // milieu de la longueur (10 tenons)
+const WHEEL_X = 3.5 * S;              // milieu de la largeur (7 tenons)
+
+const COL = {
+  black:  {hex:0x2c3035, edge:0x8a9096, name:'Noir'},
+  dkgrey: {hex:0x6c6e68, edge:0x2f302d, name:'Gris foncé'},
+  ltgrey: {hex:0xa0a5a9, edge:0x55595c, name:'Gris clair'},
+  red:    {hex:0xc91a09, edge:0x5a0a03, name:'Rouge'},
+  gold:   {hex:0xcfa43c, edge:0x6b521a, name:'Or (ou jaune)'},
+  trclear:{hex:0xe8f4fa, edge:0x7d949e, name:'Transparent', opacity:.6},
+  trred:  {hex:0xe0301e, edge:0x7a1a10, name:'Rouge transparent', opacity:.7},
+  tan:    {hex:0xe4cd9e, edge:0x8c7a52, name:'Beige'},
+};
+const hexStr = h => '#' + h.toString(16).padStart(6,'0');
+
+const REF = {
+  'Plaque 4x6':'3032','Brique 2x4':'3001','Brique 2x3':'3002','Brique 2x2':'3003','Brique 2x6':'2456',
+  'Brique 1x2':'3004','Brique 1x1':'3005','Brique 1x8':'3008','Brique Technic 1x2 (trou)':'3700',
+  'Pente inversée 45° 2x2':'3660','Brique ronde 1x1':'3062','Plaque 6x10':'3033','Plaque 1x10':'4477',
+  'Brique phare 1x1':'4070','Plaque ronde 1x1':'4073','Tuile 1x6':'6636','Tuile 1x4':'2431','Tuile 1x2':'3069',
+  'Axe Technic 5':'32073','Bague Technic':'3713 ou demi-bague 4265','Roue + pneu ≈ 80 mm':'ex. 2902 + 2903',
+};
+
+/* ---------- constructeurs de pièces ---------- */
+const dn = (w,l) => `${Math.min(w,l)}x${Math.max(w,l)}`;
+const brick  = (x,y,z,w,l,c='black') => ({t:'box',x,y,z,w,l,h:3,c,studs:true,name:`Brique ${dn(w,l)}`});
+const plate  = (x,y,z,w,l,c='black') => ({t:'box',x,y,z,w,l,h:1,c,studs:true,name:`Plaque ${dn(w,l)}`});
+const tile   = (x,y,z,w,l,c='black') => ({t:'box',x,y,z,w,l,h:1,c,studs:false,name:`Tuile ${dn(w,l)}`});
+const technic= (x,y,z,c='black') => ({t:'technic',x,y,z,w:1,l:2,h:3,c,studs:true,name:'Brique Technic 1x2 (trou)'});
+const invslope=(x,y,z,dir,c='black') => ({t:'invslope',x,y,z,w:2,l:2,h:3,dir,c,name:'Pente inversée 45° 2x2'});
+const round1 = (x,y,z,c='red') => ({t:'round',x,y,z,w:1,l:1,h:3,c,name:'Brique ronde 1x1'});
+const rplate = (x,y,z,c,dir) => ({t:'rplate',x,y,z,w:1,l:1,h:1,c,dir,name:'Plaque ronde 1x1'});
+const light  = (x,y,z,dir,c='black') => ({t:'headlight',x,y,z,w:1,l:1,h:3,dir,c,name:'Brique phare 1x1'});
+const axle   = () => ({t:'axle',c:'ltgrey',name:'Axe Technic 5'});
+const bush   = xm => ({t:'bush',xm,c:'ltgrey',name:'Bague Technic'});
+const wheel  = () => ({t:'wheel',c:'black',name:'Roue + pneu ≈ 80 mm'});
+// miroir gauche -> droite (largeur totale 7 tenons)
+const mir = p => ({...p, x: 7 - (p.x + p.w)});
+const both = arr => [...arr, ...arr.map(mir)];
+
+/* ---------- les étapes ---------- */
+const STEPS = [
+ {title:'Flanc gauche — pédale et trou d\'axe', az:-58, el:36,
+  text:`Pose la <b>plaque 4x6</b> : c'est la pédale. Dessus, sur les 2 rangées intérieures : une <b>2x3</b> à chaque bout (elles dépassent d'1 tenon devant et derrière) et au milieu la <b>brique Technic 1x2</b> côté roue + une <b>1x2</b> normale côté extérieur. La plaque dépasse de 2 tenons vers l'extérieur.`,
+  tip:`Le trou Technic doit tomber pile au milieu de la longueur : 4 tenons devant, 4 derrière.`,
+  pieces:[ plate(-2,2,0,4,6), brick(0,1,1,2,3), brick(0,4,1,1,2), technic(1,4,1), brick(0,6,1,2,3) ]},
+ {title:'Flanc gauche — le bas arrondi', az:-58, el:36,
+  text:`Une <b>brique 2x6</b> au centre et une <b>pente inversée 2x2</b> à chaque bout, la pente tournée vers l'extérieur (vers l'avant et vers l'arrière). Le flanc fait maintenant 10 tenons de long.`,
+  pieces:[ invslope(0,0,4,'-y'), brick(0,2,4,2,6), invslope(0,8,4,'+y') ]},
+ {title:'Flanc droit — le même en miroir', az:58, el:34,
+  text:`Refais les étapes 1 et 2 en miroir : la pédale dépasse vers la droite, la brique Technic est toujours <b>côté roue</b>. Pose les deux flancs face à face avec <b>3 tenons d'écart</b>.`,
+  pieces: [ plate(-2,2,0,4,6), brick(0,1,1,2,3), brick(0,4,1,1,2), technic(1,4,1), brick(0,6,1,2,3),
+            invslope(0,0,4,'-y'), brick(0,2,4,2,6), invslope(0,8,4,'+y') ].map(mir)},
+ {title:'La roue', az:-60, el:20,
+  text:`Enfile l'<b>axe 5</b> dans le moyeu avec une <b>bague</b> de chaque côté pour centrer la roue. Plante un bout dans le trou Technic du flanc gauche, puis rapproche le flanc droit pour enfiler l'autre bout. L'axe est entièrement caché dans les flancs.`,
+  tip:`Moyeu trop large ? Enlève les bagues. Trop étroit ? Ajoute des demi-bagues. La roue doit tourner librement.`,
+  pieces:[ axle(), bush(WHEEL_X-11), bush(WHEEL_X+11), wheel() ]},
+ {title:'Les amortisseurs rouges', az:-64, el:24,
+  text:`Sur chaque flanc : une <b>2x4</b> à chaque bout, et au milieu une <b>1x2 noire</b> côté roue + <b>2 briques rondes 1x1 rouges</b> côté extérieur. C'est l'amortisseur rouge qu'on voit sur le côté du vrai Sherman S.`,
+  pieces: both([ brick(0,0,7,2,4), brick(1,4,7,1,2), round1(0,4,7), round1(0,5,7), brick(0,6,7,2,4) ])},
+ {title:'Amortisseurs, 2ᵉ étage', az:-64, el:24,
+  text:`Exactement la même couche une deuxième fois : l'amortisseur fait 2 briques de haut.`,
+  pieces: both([ brick(0,0,10,2,4), brick(1,4,10,1,2), round1(0,4,10), round1(0,5,10), brick(0,6,10,2,4) ])},
+ {title:'On verrouille les flancs', az:-64, el:28,
+  text:`<b>2x2 · 2x6 · 2x2</b> sur chaque flanc. La 2x6 chevauche les joints du dessous et rigidifie tout le flanc.`,
+  tip:`Vérifie que le haut du pneu reste sous le dessus de ces briques. S'il frotte, ajoute une plaque sur chaque flanc.`,
+  pieces: both([ brick(0,0,13,2,2), brick(0,2,13,2,6), brick(0,8,13,2,2) ])},
+ {title:'Le garde-boue', az:-58, el:38,
+  text:`Pose la <b>plaque 6x10</b> et la <b>plaque 1x10</b> à cheval sur les deux flancs : elles couvrent la roue et relient les deux côtés. En gris foncé ça fait la ligne de séparation du vrai modèle (sinon noir).`,
+  pieces:[ plate(0,0,16,6,10,'dkgrey'), plate(6,0,16,1,10,'dkgrey') ]},
+ {title:'Phares et feu arrière', az:-42, el:30,
+  text:`Rangée avant : <b>1x2</b> · <b>phare</b> · <b>1x1</b> · <b>phare</b> · <b>1x2</b>, tenons latéraux vers l'avant. Pareil à l'arrière (tenons vers l'arrière). Entre les deux, 4 rangées de briques <b>posées en travers</b> : 2x4 + 2x3, en alternant le côté. Clipse les <b>plaques rondes transparentes</b> devant (double phare) et <b>rouges transparentes</b> derrière.`,
+  tip:`Les briques en travers croisent le joint entre les deux plaques du garde-boue : c'est ce qui rend le haut solide.`,
+  pieces:[
+    brick(0,0,17,2,1), light(2,0,17,'-y'), brick(3,0,17,1,1), light(4,0,17,'-y'), brick(5,0,17,2,1),
+    rplate(2,0,17,'trclear','-y'), rplate(4,0,17,'trclear','-y'),
+    brick(0,1,17,4,2), brick(4,1,17,3,2),
+    brick(0,3,17,3,2), brick(3,3,17,4,2),
+    brick(0,5,17,4,2), brick(4,5,17,3,2),
+    brick(0,7,17,3,2), brick(3,7,17,4,2),
+    brick(0,9,17,2,1), light(2,9,17,'+y'), brick(3,9,17,1,1), light(4,9,17,'+y'), brick(5,9,17,2,1),
+    rplate(2,9,17,'trred','+y'), rplate(4,9,17,'trred','+y'),
+  ]},
+ {title:'Le dessus', az:-55, el:42,
+  text:`3 <b>tuiles 1x6 gris foncé</b> au centre (le porte-bagage), une <b>brique 1x1</b> à chaque bout de la rangée du milieu (les piliers de la poignée), et le bouchon d'amortisseur : <b>plaque ronde rouge</b> + <b>plaque ronde dorée</b>.`,
+  pieces:[ tile(2,2,20,1,6,'dkgrey'), tile(3,2,20,1,6,'dkgrey'), tile(4,2,20,1,6,'dkgrey'),
+           brick(3,0,20,1,1), brick(3,9,20,1,1),
+           rplate(1,5,20,'red'), rplate(1,5,21,'gold') ]},
+ {title:'La poignée', az:-62, el:28,
+  text:`La <b>plaque 1x10</b> sur les deux piliers, puis les <b>tuiles</b> 1x4 · 1x2 · 1x4 pour la finition. Ça fait la poignée de transport / trolley qui court sur tout le dessus.`,
+  pieces:[ plate(3,0,23,1,10), tile(3,0,24,1,4), tile(3,4,24,1,2), tile(3,6,24,1,4) ]},
+ {title:'Le support de présentation', az:-64, el:14,
+  text:`Une gyroroue ne tient pas debout seule ! Comme le support en bois des photos : sous chaque pédale, une <b>plaque 4x6 beige</b> + <b>3 briques 2x4 beiges</b>. Le pneu touche la table au milieu : le modèle repose sur 3 points et ne bouge plus.`,
+  tip:`Roue plus petite que 81 mm ? Enlève des briques/plaques au support (voir le tableau « Choisis ta roue »).`,
+  pieces: both([ plate(-3,2,-10,4,6,'tan'), brick(-2,3,-9,2,4,'tan'), brick(-2,3,-6,2,4,'tan'), brick(-2,3,-3,2,4,'tan') ])},
+];
+STEPS.forEach((s,i)=>s.pieces.forEach(p=>p.step=i+1));
+const ALL = STEPS.flatMap(s=>s.pieces);
+
+/* ---------- géométrie ---------- */
+const matCache = {};
+function mat(c){
+  if(!matCache[c]){
+    const k = COL[c];
+    matCache[c] = new THREE.MeshLambertMaterial({color:k.hex, transparent:!!k.opacity, opacity:k.opacity||1,
+      polygonOffset:true, polygonOffsetFactor:1, polygonOffsetUnits:1});
+  }
+  return matCache[c];
+}
+const DARK = new THREE.MeshBasicMaterial({color:0x111111});
+const STUD = new THREE.CylinderGeometry(2.4,2.4,1.7,20);
+
+function makePiece(p){
+  const g = new THREE.Group(); g.userData.p = p;
+  const m = mat(p.c), edgeCol = COL[p.c].edge;
+  const add = (geo, x,y,z, opt={}) => {
+    const mesh = new THREE.Mesh(geo, opt.mat||m); mesh.position.set(x,y,z); g.add(mesh);
+    if(!opt.noEdge){
+      const e = new THREE.LineSegments(new THREE.EdgesGeometry(geo, 25), new THREE.LineBasicMaterial({color:edgeCol}));
+      e.position.set(x,y,z); e.userData.edge = true; e.userData.base = edgeCol; g.add(e);
+    }
+    return mesh;
+  };
+  const studs = (x0,z0,w,l,yTop) => { for(let i=0;i<w;i++) for(let j=0;j<l;j++) add(STUD, x0+(i+.5)*S, yTop+.85, z0+(j+.5)*S); };
+  const X = p.x*S, Z = p.y*S, Yb = (p.z+ZOFF)*P;
+
+  switch(p.t){
+    case 'box': case 'technic': case 'headlight': {
+      const geo = new THREE.BoxGeometry(p.w*S-.3, p.h*P-.1, p.l*S-.3);
+      add(geo, X+p.w*S/2, Yb+p.h*P/2, Z+p.l*S/2);
+      if(p.studs || p.t!=='box') studs(X,Z,p.w,p.l,Yb+p.h*P);
+      if(p.t==='technic'){
+        const hole = new THREE.CircleGeometry(2.5,24);
+        for(let j=1;j<p.l;j++) for(const side of [0,1]){
+          const h = new THREE.Mesh(hole, DARK);
+          h.rotation.y = side ? Math.PI/2 : -Math.PI/2;
+          h.position.set(side ? X+p.w*S+.02 : X-.02, Yb+5.8, Z+j*S); g.add(h);
+        }
+      }
+      break;
+    }
+    case 'invslope': {
+      let pts = [[0,9.6],[16,9.6],[16,0],[8,0],[0,8]];
+      if(p.dir==='+y') pts = pts.map(([u,v])=>[16-u,v]);
+      const sh = new THREE.Shape(pts.map(([u,v])=>new THREE.Vector2(u,v)));
+      const geo = new THREE.ExtrudeGeometry(sh,{depth:p.w*S-.3,bevelEnabled:false});
+      geo.rotateY(-Math.PI/2); // u->Z, v->Y, extrusion->-X
+      add(geo, X+p.w*S-.15, Yb, Z);
+      studs(X,Z,2,2,Yb+9.6);
+      break;
+    }
+    case 'round': {
+      add(new THREE.CylinderGeometry(3.9,3.9,9.5,28), X+4, Yb+4.8, Z+4);
+      studs(X,Z,1,1,Yb+9.6);
+      break;
+    }
+    case 'rplate': {
+      if(!p.dir){
+        add(new THREE.CylinderGeometry(3.9,3.9,3.1,28), X+4, Yb+1.6, Z+4);
+        studs(X,Z,1,1,Yb+3.2);
+      } else {
+        const s = p.dir==='-y' ? -1 : 1, face = p.dir==='-y' ? Z : Z+S;
+        const geo = new THREE.CylinderGeometry(3.9,3.9,3.1,28); geo.rotateX(Math.PI/2);
+        add(geo, X+4, Yb+5.4, face + s*1.6);
+        const st = STUD.clone(); st.rotateX(Math.PI/2);
+        add(st, X+4, Yb+5.4, face + s*(3.2+.85));
+      }
+      break;
+    }
+    case 'axle': {
+      const geo = new THREE.CylinderGeometry(2.3,2.3,5*S,12); geo.rotateZ(Math.PI/2);
+      add(geo, WHEEL_X, AXLE_Y, AXLE_Z);
+      break;
+    }
+    case 'bush': {
+      const geo = new THREE.CylinderGeometry(3.7,3.7,4,20); geo.rotateZ(Math.PI/2);
+      add(geo, p.xm, AXLE_Y, AXLE_Z);
+      break;
+    }
+    case 'wheel': {
+      const cx = WHEEL_X, cy = AXLE_Y, cz = AXLE_Z;
+      const tire = new THREE.CylinderGeometry(38.8,38.8,17,72); tire.rotateZ(Math.PI/2);
+      add(tire, cx,cy,cz);
+      const knob = new THREE.BoxGeometry(6.5,2.6,5);
+      const N = 30;
+      for(let i=0;i<N;i++){
+        const a = i/N*Math.PI*2;
+        for(const off of (i%2 ? [-4.6,4.6] : [0])){
+          const k = new THREE.Mesh(knob, m);
+          k.position.set(cx+off, cy+Math.cos(a)*39.6, cz+Math.sin(a)*39.6);
+          k.rotation.x = -a; g.add(k);
+        }
+      }
+      const hub = new THREE.CylinderGeometry(25,25,17.6,40); hub.rotateZ(Math.PI/2);
+      add(hub, cx,cy,cz, {mat:mat('dkgrey')});
+      const ctr = new THREE.CylinderGeometry(7,7,18.4,20); ctr.rotateZ(Math.PI/2);
+      add(ctr, cx,cy,cz);
+      break;
+    }
+  }
+  return g;
+}
+
+function makeScene(){
+  const sc = new THREE.Scene();
+  sc.add(new THREE.HemisphereLight(0xffffff, 0x777777, 1.9));
+  const d1 = new THREE.DirectionalLight(0xffffff, 1.7); d1.position.set(-80,140,-110); sc.add(d1);
+  const d2 = new THREE.DirectionalLight(0xffffff, .6); d2.position.set(100,60,120); sc.add(d2);
+  return sc;
+}
+
+const HIGHLIGHT = 0xff6a13;
+function setStep(objs, s, highlight=true){
+  for(const o of objs){
+    const p = o.userData.p;
+    o.visible = p.step <= s;
+    o.traverse(c=>{ if(c.userData.edge) c.material.color.setHex(highlight && p.step===s ? HIGHLIGHT : c.userData.base); });
+  }
+}
+
+function fit(cam, objs, az, el, margin=1.08){
+  const box = new THREE.Box3();
+  objs.forEach(o=>{ if(o.visible){ o.updateMatrixWorld(true); box.expandByObject(o); } });
+  const sph = box.getBoundingSphere(new THREE.Sphere());
+  const fovV = THREE.MathUtils.degToRad(cam.fov/2);
+  const fovH = Math.atan(Math.tan(fovV)*cam.aspect);
+  const d = sph.radius / Math.sin(Math.min(fovV,fovH)) * margin;
+  const a = THREE.MathUtils.degToRad(az), e = THREE.MathUtils.degToRad(el);
+  cam.position.set(sph.center.x + d*Math.sin(a)*Math.cos(e), sph.center.y + d*Math.sin(e), sph.center.z - d*Math.cos(a)*Math.cos(e));
+  cam.near = d/20; cam.far = d*4; cam.lookAt(sph.center); cam.updateProjectionMatrix();
+  return sph.center;
+}
+
+/* ---------- rendus statiques (étapes + inventaire) ---------- */
+const off = new THREE.WebGLRenderer({antialias:true, alpha:true, preserveDrawingBuffer:true});
+off.setPixelRatio(2);
+
+function snapshot(scene, objs, az, el, w, h, margin){
+  off.setSize(w,h);
+  const cam = new THREE.PerspectiveCamera(28, w/h, 1, 5000);
+  fit(cam, objs, az, el, margin);
+  off.render(scene, cam);
+  return off.domElement.toDataURL('image/png');
+}
+
+// clé d'inventaire
+const keyOf = p => `${p.name}|${p.c}`;
+
+// vignettes des pièces
+const thumbs = {};
+{
+  const sc = makeScene();
+  for(const p of ALL){
+    const k = keyOf(p);
+    if(thumbs[k]) continue;
+    const q = {...p, x:0, y:0, z:0, step:1};
+    if(q.t==='rplate') delete q.dir;
+    if(q.t==='bush') q.xm = 0;
+    const o = makePiece(q); sc.add(o);
+    thumbs[k] = snapshot(sc, [o], -35, 32, 160, 120, 1.02);
+    sc.remove(o);
+  }
+}
+
+// inventaire complet
+const bomMap = new Map();
+for(const p of ALL){ const k = keyOf(p); bomMap.set(k, (bomMap.get(k)||0)+1); }
+const colorOrder = Object.keys(COL);
+const bomSorted = [...bomMap.entries()].sort((a,b)=>{
+  const [na,ca] = a[0].split('|'), [nb,cb] = b[0].split('|');
+  return colorOrder.indexOf(ca)-colorOrder.indexOf(cb) || na.localeCompare(nb,'fr',{numeric:true});
+});
+document.getElementById('bom').innerHTML = bomSorted.map(([k,n])=>{
+  const [name,c] = k.split('|');
+  return `<div class="part"><img src="${thumbs[k]}" alt=""><div class="q">×${n}</div>
+    <div class="nm">${name}</div><div class="rf"><span class="sw" style="background:${hexStr(COL[c].hex)}"></span>${COL[c].name} · ${REF[name]||''}</div></div>`;
+}).join('');
+
+const total = ALL.length;
+document.getElementById('stats').innerHTML = [
+  [total,'pièces'],[STEPS.length,'étapes'],['≈ 11 cm','de haut'],['8 cm','de long'],['1','roue qui tourne'],
+].map(([b,s])=>`<div class="stat"><b>${b}</b><small>${s}</small></div>`).join('');
+
+// images des étapes
+{
+  const sc = makeScene();
+  const objs = ALL.map(p=>{ const o = makePiece(p); sc.add(o); return o; });
+  const html = STEPS.map((s,i)=>{
+    setStep(objs, i+1);
+    const img = snapshot(sc, objs, s.az, s.el, 900, 640, 1.08);
+    const counts = new Map();
+    s.pieces.forEach(p=>{ const k = keyOf(p); counts.set(k,(counts.get(k)||0)+1); });
+    const call = [...counts.entries()].map(([k,n])=>{
+      const [name,c] = k.split('|');
+      return `<div class="it"><img src="${thumbs[k]}" alt=""><b>${n}×</b>${name}<br><span class="sw" style="background:${hexStr(COL[c].hex)}"></span>${COL[c].name}</div>`;
+    }).join('');
+    return `<div class="step card">
+      <div class="img"><span class="num">${i+1}</span><img src="${img}" alt="Étape ${i+1}"></div>
+      <div><h3>${s.title}</h3><div class="callout">${call}</div><p>${s.text}</p>${s.tip?`<div class="tip">${s.tip}</div>`:''}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('steps').innerHTML = html;
+}
+off.dispose();
+
+/* ---------- visionneuse 3D ---------- */
+{
+  const box = document.getElementById('viewer');
+  const r = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  r.setPixelRatio(Math.min(devicePixelRatio,2));
+  box.prepend(r.domElement);
+  const sc = makeScene();
+  const objs = ALL.map(p=>{ const o = makePiece(p); sc.add(o); return o; });
+  const ground = new THREE.Mesh(new THREE.CircleGeometry(140,64), new THREE.MeshBasicMaterial({color:0xdcd8ce}));
+  ground.rotation.x = -Math.PI/2; ground.position.set(WHEEL_X,-.2,AXLE_Z); sc.add(ground);
+  const cam = new THREE.PerspectiveCamera(30, 1, 1, 5000);
+  const ctl = new OrbitControls(cam, r.domElement);
+  ctl.enableDamping = true;
+  const slider = document.getElementById('slider'), label = document.getElementById('vlabel');
+  slider.max = STEPS.length; slider.value = STEPS.length;
+  const size = () => { const w = box.clientWidth, h = box.clientHeight; r.setSize(w,h,false); cam.aspect = w/h; cam.updateProjectionMatrix(); };
+  size();
+  setStep(objs, STEPS.length, false);
+  const c = fit(cam, objs, -64, 18, 1.0); ctl.target.copy(c); ctl.update();
+  const show = s => {
+    slider.value = s;
+    setStep(objs, s, s < STEPS.length);
+    label.textContent = s === STEPS.length ? 'Modèle terminé' : `Étape ${s} — ${STEPS[s-1].title}`;
+  };
+  show(STEPS.length);
+  slider.oninput = () => show(+slider.value);
+  document.getElementById('prev').onclick = () => show(Math.max(1, +slider.value-1));
+  document.getElementById('next').onclick = () => show(Math.min(STEPS.length, +slider.value+1));
+  addEventListener('resize', size);
+  (function loop(){ ctl.update(); r.render(sc,cam); requestAnimationFrame(loop); })();
+}
+</script>
+</body>
+</html>

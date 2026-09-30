@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plans LEGO</title>
+<link rel="stylesheet" href="lib/css/plan.css">
+<style>
+  .plans{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-top:24px}
+  .plan{display:flex;flex-direction:column;background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;text-decoration:none;color:inherit;transition:border-color .15s,transform .15s}
+  .plan:hover{border-color:var(--accent);transform:translateY(-2px)}
+  .plan img{width:100%;aspect-ratio:4/3;object-fit:cover;background:#fff}
+  .plan div{padding:14px 16px}
+  .plan h3{margin:0 0 4px;font-size:19px}
+  .plan p{margin:0;color:var(--muted);font-size:14px}
+  .tag{display:inline-block;font-size:12px;font-weight:700;border-radius:6px;padding:1px 8px;margin-bottom:6px;background:var(--accent-soft);color:var(--accent)}
+  .tag.old{background:#eee;color:#666}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1>Plans <span>LEGO</span></h1>
+  <p>Mes modèles LEGO avec leurs notices de montage en 3D.</p>
+</div></header>
+<main class="wrap">
+  <h2>Leaperkim Sherman S</h2>
+  <div class="plans">
+    <a class="plan" href="plans/sherman-s-v2/index.html">
+      <img src="Sherman%20S/trolley%20ouvert.jpg" alt="">
+      <div><span class="tag">V2</span><h3>Sherman S V2</h3><p>Suspension, trolley qui s'ouvre, pédales pliantes, flancs d'1 tenon, roue au choix.</p></div>
+    </a>
+    <a class="plan" href="plans/sherman-s-powerpads/index.html">
+      <img src="Sherman%20S/powerpad%20grizzla.webp" alt="">
+      <div><span class="tag">Accessoire</span><h3>Powerpads</h3><p>2 paires (tibia + mollet) à clipser sur la V2, couleur au choix.</p></div>
+    </a>
+    <a class="plan" href="plans/sherman-s-v1/index.html">
+      <img src="Sherman%20S/LEAPERKIM_SHERMAN_S_SUSPENSION-500x500.webp" alt="">
+      <div><span class="tag old">V1</span><h3>Sherman S V1</h3><p>La première version, simple : flancs de 2 tenons, roue fixe.</p></div>
+    </a>
+  </div>
+  <h2>Kingsong S18</h2>
+  <div class="plans">
+    <a class="plan" href="plans/kingsong-s18/index.html">
+      <img src="Kingsong%20S18/s18%202.jpg" alt="">
+      <div><span class="tag">V1</span><h3>Kingsong S18</h3><p>Amortisseur central à l'arrière, bras dorés, trolley coulissant, pads intégrés, roue au choix.</p></div>
+    </a>
+  </div>
+  <h2>Shangri-La Frontier</h2>
+  <div class="plans">
+    <a class="plan" href="plans/masque-sunraku/index.html">
+      <img src="Masque%20Sunraku%20-%20Shangri%20la%20frontiere/Vrais%20image%20Sunraku.jpg" alt="">
+      <div><span class="tag">Buste</span><h3>Masque de Sunraku</h3><p>Tête d'oiseau en buste d'expo : bec, yeux, crête et collerette. Couleur au choix.</p></div>
+    </a>
+  </div>
+  <footer>LEGO® est une marque du groupe LEGO, qui ne sponsorise pas ces plans.</footer>
+</main>
+</body>
+</html>

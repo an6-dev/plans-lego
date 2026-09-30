@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Powerpads Sherman S en LEGO</title>
+<link rel="stylesheet" href="../../lib/css/plan.css">
+<script src="../../lib/vendor/three.js"></script>
+<script src="../../lib/vendor/OrbitControls.js"></script>
+<script src="../../lib/lego/core.js"></script>
+<script src="../../lib/lego/geometry.js"></script>
+<script src="../../lib/lego/engine.js"></script>
+<script src="../../lib/lego/page.js"></script>
+<script src="../../plans/sherman-s-powerpads/pads.js"></script>
+<script src="../../plans/sherman-s-v2/model.js"></script>
+<script src="../../plans/sherman-s-powerpads/model.js"></script>
+</head>
+<body>
+<script>
+const { mountPlan } = LEGO;
+const { powerpads } = LEGO;
+const { PAD_COLORS } = LEGO;
+
+const img = f => '../../Sherman%20S/' + encodeURIComponent(f);
+
+mountPlan({
+  title: '<span>Powerpads</span> pour la Sherman S V2',
+  subtitle: '2 paires de pads à clipser sur les flancs : un grand pour le tibia, un petit pour retenir le mollet. Choisis ta couleur.',
+  intro: 'Les pads montés sur la Sherman S V2. Choisis la couleur plus bas.',
+  factory: powerpads,
+  view: {az:-62, el:18},
+  options: [
+    {key:'padColor', label:'Couleur :', default:'red', choices: PAD_COLORS,
+     help:'La bande antidérapante reste beige (comme le nid d\'abeille des Grizzla). Tu peux aussi la faire en noir ou en gris.'},
+  ],
+  stats: () => [['4','pads'],['2','paires']],
+  photos: [
+    {src: img('powerpad grizzla.webp'), alt:'Powerpads Grizzla : petit (mollet) et grand (tibia)'},
+    {src: img('avec powerpad + siege.jpg'), alt:'Pads montés sur la roue'},
+  ],
+  notes: `<b>Pas la bonne pièce ?</b>
+    <ul style="margin:6px 0 0;padding-left:20px;font-size:15px">
+      <li>Plaque 4x6 → 2 plaques 2x6, ou 4 plaques 1x6.</li>
+      <li>Pente incurvée 2x2 → 2 pentes incurvées 1x2, ou juste des tuiles (pad à bord droit).</li>
+      <li>Tuiles beiges → n'importe quelle couleur qui tranche avec le pad.</li>
+    </ul>`,
+  stepsIntro: 'Chaque pad se construit à plat, face vers le haut, puis se clipse sur le flanc. Les pièces à ajouter sont entourées d\'<b class="hl">orange</b>, ou de <b style="color:#0a84ff">bleu</b> sur les pièces rouges, orange, jaunes ou beiges.',
+});
+</script>
+</body>
+</html>

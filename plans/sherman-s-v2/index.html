@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sherman S V2 en LEGO</title>
+<link rel="stylesheet" href="../../lib/css/plan.css">
+<script src="../../lib/vendor/three.js"></script>
+<script src="../../lib/vendor/OrbitControls.js"></script>
+<script src="../../lib/lego/core.js"></script>
+<script src="../../lib/lego/geometry.js"></script>
+<script src="../../lib/lego/engine.js"></script>
+<script src="../../lib/lego/page.js"></script>
+<script src="../../plans/sherman-s-powerpads/pads.js"></script>
+<script src="../../plans/sherman-s-v2/model.js"></script>
+</head>
+<body>
+<script>
+const { mountPlan } = LEGO;
+const { shermanV2, WHEELS, standPlates } = LEGO;
+const { PAD_COLORS } = LEGO;
+
+const img = f => '../../Sherman%20S/' + encodeURIComponent(f);
+
+mountPlan({
+  title: 'Leaperkim <span>Sherman S</span> V2',
+  subtitle: 'Suspension qui fonctionne, trolley qui s\'ouvre et se ferme, pédales pliantes, flancs d\'1 tenon et attaches pour les powerpads. Tu choisis la roue.',
+  intro: 'Tourne-le à la souris. Les boutons en dessous font bouger le trolley, les pédales et la suspension.',
+  factory: shermanV2,
+  view: {az:-62, el:18},
+  options: [
+    {key:'wheel', label:'Ta roue :', default:'82',
+     choices: Object.entries(WHEELS).map(([value,w]) => ({value, label:w.label})),
+     help:'Toute roue Technic de 60 à 84 mm de diamètre et de 23 mm de large maximum rentre sans rien changer. Les images, les bagues et le support s\'adaptent.'},
+    {key:'padColor', label:'Couleur des powerpads (aperçu) :', default:'red', choices: PAD_COLORS},
+  ],
+  stats: (o, def) => [['≈ 11 cm','de haut'],['3','mécanismes'],[`Ø ${def.info.wheel.d} mm`,'roue']],
+  photos: [
+    {src: img('LEAPERKIM_SHERMAN_S_SUSPENSION-500x500.webp'), alt:'Profil, amortisseur rouge'},
+    {src: img('trolley ouvert.jpg'), alt:'Trolley ouvert'},
+    {src: img('trolley ouvert 2.jpg'), alt:'Trolley et pédales dépliés'},
+    {src: img('avec powerpad + siege.jpg'), alt:'Avec powerpads'},
+    {src: img('lego suspension.jpg'), alt:'Tes amortisseurs LEGO 6.5L'},
+  ],
+  sections: [
+    {title:'Comment ça marche', html: (o, def) => `
+      <div class="card">
+        <table>
+          <tr><th>Mécanisme</th><th>Principe LEGO</th></tr>
+          <tr><td><b>Suspension</b></td><td>La roue est portée par deux <b>bras oscillants</b> (poutres 1x5) qui pivotent à l'avant de la coque. Un <b>amortisseur 6.5L</b> par côté, visible dans la fente du flanc comme sur la vraie, relie l'axe de roue au haut de la coque. Appuie sur le toit : la coque descend d'environ 6 mm.</td></tr>
+          <tr><td><b>Trolley</b></td><td>Deux poutres 1x7 pivotent sur des <b>connecteurs à friction</b> à l'arrière du dessus. Fermé, il se range dans le creux entre les phares. Ouvert, il se lève d'environ 105°.</td></tr>
+          <tr><td><b>Pédales</b></td><td><b>Clips sur barre</b> : la pédale tourne autour de la barre et se replie contre le flanc.</td></tr>
+          <tr><td><b>Powerpads</b></td><td>Deux <b>briques 1x4 à tenons latéraux</b> par flanc. Les pads se clipsent dessus (voir le plan Powerpads).</td></tr>
+        </table>
+        <div class="tip">Les dimensions de l'amortisseur (≈ 44 mm entre les trous, détendu) sont une estimation : LEGO ne les publie pas. S'il est un peu plus long ou plus court chez toi, règle la hauteur avec une plaque (voir étape 7).</div>
+      </div>`},
+    {title:'Le support selon ta roue', html: (o, def) => `
+      <div class="card">
+        <table>
+          <tr><th>Roue</th><th>Support</th><th>Demi-bagues</th></tr>
+          ${Object.entries(WHEELS).map(([k,w]) => {
+            const n = standPlates(w.d/2), nb = Math.max(0, Math.floor((12 - w.w/2)/4));
+            return `<tr${k===o.wheel?' style="background:var(--accent-soft)"':''}><td>${w.label}</td><td>${n} plaques de haut</td><td>${nb*2}</td></tr>`;
+          }).join('')}
+        </table>
+      </div>`},
+  ],
+  notes: `<b>Pas la bonne pièce ?</b>
+    <ul style="margin:6px 0 0;padding-left:20px;font-size:15px">
+      <li>Plaque 6x10 + 1x10 → n'importe quelles plaques qui couvrent 7x10 tenons.</li>
+      <li>Brique 1x4 à tenons latéraux → 4 briques 1x1 à tenon latéral (87087) ou 2 briques phare par colonne.</li>
+      <li>Plaque 1x2 avec barre / avec clips → n'importe quelle charnière plaque 1x2 (clic) : 2 paires par pédale.</li>
+      <li>Poutre 1x5 → poutre 1x7 (qui dépasse devant), du moment que le 1er et le 5ᵉ trou tombent sur le pivot et l'axe.</li>
+      <li>Pas d'amortisseur ? Remplace-le par une poutre 1x7 : la roue sera fixe.</li>
+    </ul>`,
+  stepsIntro: 'Les pièces à ajouter à chaque étape sont entourées d\'<b class="hl">orange</b> (en <b style="color:#0a84ff">bleu</b> sur les pièces beiges ou rouges). « Avant » = côté des phares blancs. Le flanc gauche est à gauche quand tu es debout sur les pédales.',
+});
+</script>
+</body>
+</html>
